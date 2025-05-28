@@ -1,0 +1,63 @@
+
+.form-container {
+    max-width: 300px;
+    width: 90%;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);   
+    margin: auto;
+    font-size: 14px;
+}
+
+input[type=email], input[type=password], input[type="text"] select {
+    width: 100%;
+    padding: 4px 6px;
+    margin: 10px 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+    input[type=email]:focus, input[type=password]:focus {
+        background-color: #ddd;
+        outline: none;
+    }
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: left;
+    margin-top: 20px;
+}
+.btn-submit,
+.btn-cancel {
+    padding: 6px 12px; /* smaller padding */
+    font-size: 14px; /* smaller font */
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    color: white;
+    width: 120px; /* fixed width for equal size */
+    text-align: center;
+}
+
+
+    .btn:hover {
+        opacity: 1;
+    }
+
+.page-wrapper p {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.page-wrapper a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+    .page-wrapper a:hover {
+        text-decoration: underline;
+    }
+

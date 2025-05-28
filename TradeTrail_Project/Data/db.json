@@ -1,0 +1,30 @@
+{
+  "trades": [
+    {
+      "id": "a94b",
+      "instrument": "Stock",
+      "tradeSpan": "Intraday",
+      "stockName": "spy",
+      "tradeType": "Sell",
+      "date": "2025-05-14",
+      "entryPrice": "550",
+      "exitPrice": "540",
+      "quantity": "10",
+      "profitLoss": 100,
+      "win": true
+    },
+    {
+      "id": "3633",
+      "instrument": "Stock",
+      "tradeSpan": "Intraday",
+      "stockName": "googl",
+      "tradeType": "Buy",
+      "date": "2025-05-13",
+      "entryPrice": "130",
+      "exitPrice": "140",
+      "quantity": "10",
+      "profitLoss": 100,
+      "win": true
+    }
+  ]
+}
