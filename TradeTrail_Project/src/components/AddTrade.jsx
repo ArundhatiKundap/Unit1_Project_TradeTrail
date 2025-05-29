@@ -1,9 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import '../styles/dashboard.css';
 import ShowTrades from './ShowTrades';
-export default function Addtrade() {
-    
+export default function Addtrade({ userEmail, selectedTrade, onSubmitSuccess }) {
+
+    useEffect(() => {
+        if (selectedTrade) {
+            setFormData({
+                ...selectedTrade,
+                date: selectedTrade.date?.slice(0, 10), // trim timestamp
+            });
+        } else {
+            resetForm(); // or set empty formData
+        }
+    }, [selectedTrade]);
+
     const [showForm, setShowForm] = useState(true);
+
+    const [errors, setErrors] = useState({});
+
     const [formData, setFormData] = useState({
         instrument: "Stock",
         tradeSpan: "Intraday",
@@ -17,7 +31,7 @@ export default function Addtrade() {
         win: ""
 
     });
-   
+    
     
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -28,55 +42,90 @@ export default function Addtrade() {
             [name]: val,
         }));
     };
-    const winloss = (entryPrice,exitPrice) => {
-        if (formData.tradeType.toLowerCase() === "buy") {
+
+    const isWinningTrade = () => {
+        const { entryPrice, exitPrice, tradeType } = formData;
+        if (entryPrice == null || exitPrice == null) return null;
+
+        if (tradeType.toLowerCase() === "buy") {
             return exitPrice > entryPrice;
-        } else if (formData.tradeType.toLowerCase() === "sell") {
+        } else if (tradeType.toLowerCase() === "sell") {
             return entryPrice > exitPrice;
-        } else {
-            alert("Select TradeType");
-            return null;
         }
+        return null;
     };
+
+    const calculateProfitLoss = () => {
+        const { entryPrice, exitPrice, quantity, tradeType } = formData;
+        if (entryPrice == null || exitPrice == null || quantity == null) return 0;
+        let profitloss;
+
+        if (tradeType.toLowerCase() === "sell") {
+            profitloss = (entryPrice - exitPrice) * quantity;
+        } else if (tradeType.toLowerCase() === "buy") {
+            profitloss = (exitPrice - entryPrice) * quantity;
+        } else {
+            profitloss = null;
+        }
+        const isWin = isWinningTrade();
+
+        return isWin ? Math.abs(profitloss) : -Math.abs(profitloss);
+        
+        
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const win = winloss(formData.entryPrice, formData.exitPrice);
-        let profitLoss;
-        profitLoss = (formData.exitPrice - formData.entryPrice) * formData.quantity;    
-        if ((formData.tradeType.toLowerCase() === "sell") && win) {
-            profitLoss = profitLoss * -1;
-        }
-
+        const newErrors = validateForm(formData);
+        setErrors(newErrors);
+       
+        const winResult = isWinningTrade();
+        const profitLossResult = calculateProfitLoss();
         const date = String(formData.date);
-
+       
         const tradeData = {
             ...formData,
             date,
-            profitLoss,
-            win,
+            profitLoss: profitLossResult,
+            win: winResult,
+            userEmail,
         };
 
-        
 
-        try {
-            const addrecord = await fetch("http://localhost:3001/trades", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(tradeData),
-            });
-            if (addrecord.ok) {
-                alert("Trade added!");
-                resetForm();
-                setShowForm(true);
+        if (Object.keys(newErrors).length === 0) {
+            try {
+                const method = selectedTrade ? "PUT" : "POST";
+                const url = selectedTrade
+                    ? `http://localhost:3001/trades/${selectedTrade.id}`
+                    : "http://localhost:3001/trades";
+                const addrecord = await fetch(url, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(tradeData),
+                });
+                if (addrecord.ok) {
+                    alert(selectedTrade ? "Trade updated!" : "Trade added!");
+                    resetForm();
+                    setShowForm(true);
+                    onSubmitSuccess();
+                    
+                }
+                else {
+                    console.error("Failed to save trade");
+                }
+            } catch (err) {
+                console.error("Error saving trade:", err);
             }
-        } catch (err) {
-            console.error("Error posting trade:", err);
+        }
+        else {
+            alert("Please fill all fields")
         }
 
-        <ShowTrades/>
+        
     };
+
     const resetForm = () => {
         setFormData({
             instrument: "Stock",
@@ -91,27 +140,56 @@ export default function Addtrade() {
             win: ""
         });
     };
-
-    const win = winloss(formData.entryPrice, formData.exitPrice);
-    let profitLoss;
-    profitLoss = (formData.exitPrice - formData.entryPrice) * formData.quantity;
-    if ((formData.tradeType.toLowerCase() === "sell") && win) {
-        profitLoss = profitLoss * -1;
-    }
+    const winLossText =
+        formData.entryPrice > 0 &&
+            formData.exitPrice > 0 &&
+            formData.quantity > 0
+            ? isWinningTrade()
+                ? "Win"
+                : "Loss"
+            : "";
+    
+ 
     const date = String(formData.date);
+
+    const validateForm = (data) => {
+        const errors = {};
+
+        if (!data.stockName.trim()) {
+            errors.stockName = 'StockName is required';
+        } 
+
+        if (!data.date) {
+            errors.date = 'Date is required';
+        } 
+
+        if (!data.entryPrice) {
+            errors.entryPrice = 'Enter Entry price';
+        }
+        if (!data.exitPrice) {
+            errors.exitPrice = 'Enter Exit price';
+        } 
+
+        if (!data.quantity) {
+            errors.quantity = 'Enter quantity';
+        }
+
+        return errors;
+    };
+
     return (
         <div className="page-wrapper">
             
             {showForm && (
-                <form className="form-container">
+                <form className="form-container" onSubmit={handleSubmit}>
                     <h3>Add Trade</h3>
 
                     <hr />
                     <div className="stock-info">
-                        <div class="input-group">
+                        <div className="input-group">
                         <label>
                             <strong>Instrument</strong>
-                            </label>
+                        </label>
                         
                         <input
                             type="Text"
@@ -121,7 +199,7 @@ export default function Addtrade() {
                             maxLength={30}
                         />
                         </div>
-                        <div class="input-group">
+                        <div className="input-group">
                         <label>
                             <strong>Stock Name</strong>
                         </label>
@@ -133,6 +211,11 @@ export default function Addtrade() {
                             maxLength={30}
                             />
                         </div>
+                        {errors.stockName && (
+                            <span className="error-message">
+                                {errors.stockName}
+                            </span>
+                        )}
                         <div class="input-group">
                         <label>
                             <strong>Date</strong>
@@ -145,6 +228,11 @@ export default function Addtrade() {
                             maxLength={30}
                             />
                         </div>
+                        {errors.date && (
+                            <span className="error-message">
+                                {errors.date}
+                            </span>
+                        )}
                         <div className="input-group">
                             <label><strong>Trade Type</strong></label>
                             <div className="radio-options">
@@ -172,7 +260,7 @@ export default function Addtrade() {
                         </div>
                     </div>
                     <div className="stockprice-info">
-                        <div class="input-group">
+                        <div className="input-group">
                         <label>
                             <strong>Entry Price</strong>
                         </label>
@@ -182,10 +270,15 @@ export default function Addtrade() {
                             name="entryPrice"
                             value={formData.entryPrice}
                             onChange={handleChange}
-                            maxLength={30}
+                            
                             />
                         </div>
-                        <div class="input-group">
+                        {errors.entryPrice && (
+                            <span className="error-message">
+                                {errors.entryPrice}
+                            </span>
+                        )}
+                        <div className="input-group">
                         <label>
                             <strong>Exit Price</strong>
                         </label>
@@ -195,10 +288,15 @@ export default function Addtrade() {
                             name="exitPrice"
                             value={formData.exitPrice}
                             onChange={handleChange}
-                            maxLength={30}
+                            
                             />
                         </div>
-                        <div class="input-group">
+                        {errors.exitPrice && (
+                            <span className="error-message">
+                                {errors.exitPrice}
+                            </span>
+                        )}
+                        <div className="input-group">
                         <label>
                             <strong>Quantity</strong>
                         </label>
@@ -207,9 +305,14 @@ export default function Addtrade() {
                             name="quantity"
                             value={formData.quantity}
                             onChange={handleChange}
-                            maxLength={30}
+                            
                             />
                         </div>
+                        {errors.quantity && (
+                            <span className="error-message">
+                                {errors.quantity}
+                            </span>
+                        )}
                     </div>
                     <div className="stockprice-info">
                         <div class="input-group">
@@ -220,27 +323,26 @@ export default function Addtrade() {
                             type="number"
                             step="0.01"
                             name="profitLoss"
-                            value={profitLoss.toFixed(2)} readOnly
+                                value={calculateProfitLoss().toFixed(2)}
+                                readOnly
+                                disabled
                             />
                         </div>
-                        <div class="input-group">
+                        <div className="input-group">
                         <label><strong>Win/Loss</strong></label>
                         <input
                             type="text"
                             name="win"
-                            value={
-                                formData.entryPrice > 0 && formData.exitPrice > 0 && formData.quantity > 0
-                                    ? win
-                                        ? "Win"
-                                        : "Loss"
-                                    : ""
-                            } readOnly
+                            value={winLossText}
+                               
+                                readOnly
+                                disabled
                             />
                           </div>
                         </div>
 
                         <div className="button-group">
-                            <button type="submit" className="btn-submit" onClick={handleSubmit}>Add Trade</button>
+                        <button type="submit" className="btn-submit" > {selectedTrade ? "Update Trade" : "Add Trade"}</button>
                             <button type="button" className="btn-cancel" onClick={() => {
                                 resetForm();
                                 setShowForm(false);

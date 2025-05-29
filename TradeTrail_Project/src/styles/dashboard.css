@@ -122,10 +122,15 @@ select {
 .btn-cancel {
     background-color: #dc3545;
 }
+
+.row-container{
+    display:flex;
+}
 .trade-table-container {
     overflow-x: auto;
     background-color: #fff;
-    padding: 16px;
+    flex: 50%;
+    padding: 10px;   
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -157,8 +162,14 @@ select {
         color: #444;
     }
 
-
-
+.chart-container {
+    overflow-x: auto;
+    background-color: #fff;
+    flex: 50%;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
 
 /* For smaller screens: collapse the sidebar */
 @media screen and (max-width: 768px) {

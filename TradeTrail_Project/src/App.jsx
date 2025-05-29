@@ -13,7 +13,7 @@ import ProtectedRoute from './hooks/ProtectedRoute';
 export default function App() {
     return (
         <div className="background-container">
-            <BrowserRouter>
+            <HashRouter>
                 <Header />            
                 <Routes>             
                         <Route path="/" element={<Home />} />
@@ -28,10 +28,10 @@ export default function App() {
                                  <Dashboard />
                              </ProtectedRoute>
                         }
-                    />
-                    />
+                       />
+                   
                 </Routes>
-            </BrowserRouter>
+            </HashRouter>
         </div>
     );
 }
