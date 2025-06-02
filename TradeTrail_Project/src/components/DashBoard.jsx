@@ -18,7 +18,7 @@ export default function Dashboard() {
     const [popupMessage, setPopupMessage] = useState('');
     
 
-    if (!loggedUser.email) {
+    if (!loggedInUser.email) {
         return <div>Please log in to view your dashboard.</div>;
     }
         
