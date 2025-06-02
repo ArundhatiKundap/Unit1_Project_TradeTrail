@@ -12,7 +12,7 @@
       "quantity": "10",
       "profitLoss": 50,
       "win": true,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     },
     {
       "id": "57a5",
@@ -26,7 +26,7 @@
       "quantity": "10",
       "profitLoss": -100,
       "win": false,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     },
     {
       "id": "60ac",
@@ -40,7 +40,7 @@
       "quantity": "10",
       "profitLoss": 300,
       "win": true,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     },
     {
       "id": "0b56",
@@ -54,7 +54,7 @@
       "quantity": "10",
       "profitLoss": -200,
       "win": false,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     },
     {
       "id": "9707",
@@ -68,7 +68,7 @@
       "quantity": "5",
       "profitLoss": -50,
       "win": false,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     },
     {
       "id": "60ac",
@@ -82,7 +82,7 @@
       "quantity": "10",
       "profitLoss": 200,
       "win": true,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     },
     {
       "id": "e848",
@@ -96,7 +96,7 @@
       "quantity": "10",
       "profitLoss": -100,
       "win": false,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     },
     {
       "id": "5736",
@@ -110,7 +110,7 @@
       "quantity": "8",
       "profitLoss": 64,
       "win": true,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     },
     {
       "id": "077d",
@@ -124,7 +124,7 @@
       "quantity": "10",
       "profitLoss": 250,
       "win": true,
-      "userEmail": "test1@gmail"
+      "userEmail": "test1@gmail.com"
     }
   ]
 }
