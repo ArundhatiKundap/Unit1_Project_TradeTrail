@@ -53,16 +53,18 @@ export default function Signup() {
         }
 
         if (Object.keys(newErrors).length === 0 ) {
-            userInfo.push({
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
-                instruments: formData.instruments
-            });
+            const newUser = {
+               name: formData.name,
+               email: formData.email,
+               password: formData.password,
+               instruments: formData.instruments
+             };
+
+            userInfo.push(newUser);
 
             localStorage.setItem("users", JSON.stringify(userInfo));
             localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("loggedInUser", JSON.stringify(userInfo));
+            localStorage.setItem("loggedInUser", JSON.stringify(newUser));
             setPopupMessage("Account created successfully!");
             setPopupVisible(true); 
             resetForm();

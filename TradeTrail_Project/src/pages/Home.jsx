@@ -12,23 +12,23 @@ export default function Home() {
     const animationImg = [
         {
             label: "Steps to success",
-            imgPath: process.env.PUBLIC_URL +"/assets/animator6.jpeg",
+            imgPath: "/assets/animator6.jpeg",
         },
         {
             label: "Planning",
-            imgPath: process.env.PUBLIC_URL +"/assets/animatorimage2.jpeg",
+            imgPath: "/assets/animatorimage2.jpeg",
         },
         {
             label: "Strategy",
-            imgPath: process.env.PUBLIC_URL +"/assets/animatorImg1.jpeg",
+            imgPath: "/assets/animatorImg1.jpeg",
         },
         {
             label: "Goals",
-            imgPath: process.env.PUBLIC_URL +"/assets/animatorimg3.jpeg",
+            imgPath: "/assets/animatorimg3.jpeg",
         },
         {
             label: "Vision",
-            imgPath:process.env.PUBLIC_URL + "/assets/animatorimg5.jpeg",
+            imgPath: "/assets/animatorimg5.jpeg",
         },
         
         {
