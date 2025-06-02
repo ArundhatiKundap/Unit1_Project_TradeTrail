@@ -1,28 +1,21 @@
 import { useState, useEffect } from "react";
+import PopupWindow from "./PopupWindow";
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
     LinearScale,
-    BarController,
     BarElement,
-    Title,
-    Tooltip,
-    Legend
-} from 'chart.js';
-
-ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    BarController
-);
+} from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
 import '../styles/dashboard.css';
 
-export default function ShowTrades({ userEmail, onEdit, onDelete, refreshKey }) {
+export default function ShowTrades({ userEmail, onEdit, onDelete, refreshKey, onTradesFetched }) {
     const [trades, setTrades] = useState([]);
 
     useEffect(() => {
@@ -31,57 +24,54 @@ export default function ShowTrades({ userEmail, onEdit, onDelete, refreshKey }) 
                 const res = await fetch("http://localhost:3001/trades");
                 const data = await res.json();
                 const userTrades = data.filter(trade => trade.userEmail === userEmail)
-                                      .sort((a, b) => new Date(a.date) - new Date(b.date));
+                                      .sort((a, b) => new Date(b.date) - new Date(a.date));
                 setTrades(userTrades);
+                if (onTradesFetched) {
+                    onTradesFetched(userTrades); // Send data back to Dashboard
+                }
             } catch (err) {
-                console.error('Failed to fetch trades', err);
+                setPopupMessage('Failed to fetch trades', err);
             }
         };
 
         fetchTrades(); 
     }, [userEmail, refreshKey]);
 
-  
-        const chartData = {
-            labels: trades.map(trade => trade.date),
-            datasets: [
-                {
-                    label: 'Net Daily P&L',
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    data: trades.map(trade => Number(trade.profitLoss)),
-                },
-            ]
-                
-        };
-    
-    const options = {
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
+
+    const chartData = {
+        labels: trades.map(trade => trade.date),
+        datasets: [
+            {
+                label: 'Net Daily P&L',
+                data: trades.map(trade => Number(trade.profitLoss)),
+               
+                backgroundColor: trades.map(trade => Number(trade.profitLoss) >= 0 ? 'green' : 'red'),
+            },
+        ],
+    };
+    const chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: 'Profit/Loss Bar Chart' },
+        },
         scales: {
             y: {
                 beginAtZero: true,
-                border: { dash: [6, 6], display: true },
-                grid: {
-                    display: true // Display grid lines for the y-axis
-                },
-                ticks: {
-                    stepSize: 10,
-                    padding: 10
-                }
+                ticks: { padding: 5 },
+                grid: { display: true },
             },
             x: {
-                beginAtZero: true,
-                border: { display: true },
-                grid: {
-                    display: false // No display of grid lines for the x-axis
-                },
-                ticks: {
-                    padding: 7
-                }
-            }
+                ticks: { padding: 5 },
+                grid: { display: false },
+            },
         },
-    }
-
+    };
+    
+    
+   
     return (
         <div className ="row-container">
         <div className="trade-table-container">
@@ -124,8 +114,15 @@ export default function ShowTrades({ userEmail, onEdit, onDelete, refreshKey }) 
             )}
         </div>
             <div className="chart-container">
-                <Bar data={chartData} options={options} />
+                
+                <Bar data={chartData} options={chartOptions} />
             </div>
+            <PopupWindow
+                show={popupVisible}
+                message={popupMessage}
+                onClose={() => setPopupVisible(false)}
+            />
+
         </div>
     );
 }

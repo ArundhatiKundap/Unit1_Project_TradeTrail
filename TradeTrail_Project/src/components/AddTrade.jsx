@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import '../styles/dashboard.css';
-import ShowTrades from './ShowTrades';
+import PopupWindow from "./PopupWindow";
 export default function Addtrade({ userEmail, selectedTrade, onSubmitSuccess }) {
 
     useEffect(() => {
@@ -31,6 +31,9 @@ export default function Addtrade({ userEmail, selectedTrade, onSubmitSuccess }) 
         win: ""
 
     });
+
+    const [popupVisible, setPopupVisible] = useState(false);    //for pop up alert
+    const [popupMessage, setPopupMessage] = useState('');
     
     
     const handleChange = (e) => {
@@ -106,23 +109,32 @@ export default function Addtrade({ userEmail, selectedTrade, onSubmitSuccess }) 
                     body: JSON.stringify(tradeData),
                 });
                 if (addrecord.ok) {
-                    alert(selectedTrade ? "Trade updated!" : "Trade added!");
+                    setPopupMessage(selectedTrade ? "Trade Updated Successfully!" :"Trade Added Successfully"); 
+                    setPopupVisible(true); 
                     resetForm();
                     setShowForm(true);
                     onSubmitSuccess();
                     
                 }
                 else {
-                    console.error("Failed to save trade");
+                    setPopupMessage("Failed to save trade");
+                    
                 }
             } catch (err) {
-                console.error("Error saving trade:", err);
+                setPopupMessage("Error saving trade:", err);
+               
             }
         }
         else {
-            alert("Please fill all fields")
+            setPopupMessage("Please fill all fields")
+            
         }
+        setPopupVisible(true);
 
+        // Auto-close after 3 seconds (optional)
+        setTimeout(() => {
+            setPopupVisible(false);
+        }, 3000);
         
     };
 
@@ -343,6 +355,11 @@ export default function Addtrade({ userEmail, selectedTrade, onSubmitSuccess }) 
 
                         <div className="button-group">
                         <button type="submit" className="btn-submit" > {selectedTrade ? "Update Trade" : "Add Trade"}</button>
+                        <PopupWindow
+                            show={popupVisible}
+                            message={popupMessage}
+                            onClose={() => setPopupVisible(false)}
+                        />
                             <button type="button" className="btn-cancel" onClick={() => {
                                 resetForm();
                                 setShowForm(false);
@@ -352,6 +369,8 @@ export default function Addtrade({ userEmail, selectedTrade, onSubmitSuccess }) 
                 </form>
                 
             )}
+
+
         </div>
        
     );

@@ -97,6 +97,34 @@
       "profitLoss": -100,
       "win": false,
       "userEmail": "test1@gmail"
+    },
+    {
+      "id": "5736",
+      "instrument": "Stock",
+      "tradeSpan": "Intraday",
+      "stockName": "nvda",
+      "tradeType": "Buy",
+      "date": "2025-05-21",
+      "entryPrice": "210",
+      "exitPrice": "218",
+      "quantity": "8",
+      "profitLoss": 64,
+      "win": true,
+      "userEmail": "test1@gmail"
+    },
+    {
+      "id": "077d",
+      "instrument": "Stock",
+      "tradeSpan": "Intraday",
+      "stockName": "tsla",
+      "tradeType": "Buy",
+      "date": "2025-05-14",
+      "entryPrice": "330",
+      "exitPrice": "355",
+      "quantity": "10",
+      "profitLoss": 250,
+      "win": true,
+      "userEmail": "test1@gmail"
     }
   ]
 }

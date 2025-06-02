@@ -1,8 +1,10 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import '../styles/dashboard.css';
+import PopupWindow from "./PopupWindow";
 import Addtrade from './AddTrade';
 import ShowTrades from './ShowTrades';
-
+import Journal from './Journal';
+import Search from './SearchTrades';
 export default function Dashboard() {
  
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -11,11 +13,15 @@ export default function Dashboard() {
     const [selectedTrade, setSelectedTrade] = useState(null);
     const [formKey, setFormKey] = useState(0); // used to remount Addtrade this logic is adding to solve problem of when click cancel button and again add trade tab form is not displaying without refresh. 
     const loggedUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+    const [trades, setTrades] = useState([]);
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
+    
 
     if (!loggedUser.email) {
         return <div>Please log in to view your dashboard.</div>;
     }
-
+        
     const handleTabChange = (tab) => {
         setActiveTab(tab);
         setShowAddTrade(false); // Hide form when switching tabs
@@ -38,6 +44,8 @@ export default function Dashboard() {
         setShowTrades(true);
     };
 
+   
+
     const handleDeleteTrade = async (id) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this trade?");
         if (!confirmDelete) return;
@@ -51,11 +59,11 @@ export default function Dashboard() {
                 throw new Error("Failed to delete the trade.");
             }
 
-            alert("Trade deleted successfully.");
+            setPopupMessage("Trade deleted successfully.");
             setFormKey((prev) => prev + 1); // Refresh trade list
         } catch (error) {
-            console.error("Error deleting trade:", error);
-            alert("There was an error deleting the trade.");
+            
+            setPopupMessage("There was an error deleting the trade.");
         }
     };
 
@@ -76,7 +84,7 @@ export default function Dashboard() {
                             selectedTrade={selectedTrade}
                             onSubmitSuccess={() => {
                               
-                                setFormKey((prev) => prev + 1); // Refresh ShowTrades
+                            setFormKey((prev) => prev + 1); // Refresh ShowTrades
                             }}
                             
                         />}
@@ -88,6 +96,7 @@ export default function Dashboard() {
                                 userEmail={loggedUser.email}
                                 onEdit={handleEditTrade}
                                 onDelete={handleDeleteTrade}
+                                onTradesFetched={setTrades}
                                 refreshKey={formKey}     // refresh trigger
                             />}
                       </div>
@@ -97,14 +106,14 @@ export default function Dashboard() {
                 return (
                     <div className="tabcontent">
                         <h3>Journal</h3>
-                        <p>Show records</p>
+                        <Journal trades={trades} />
                     </div>
                 );
             case 'search':
                 return (
                     <div className="tabcontent">
                         <h3>Search</h3>
-                        <p>Search for stockName</p>
+                        <Search trades={trades}/>
                     </div>
                 );
             default:
@@ -116,21 +125,61 @@ export default function Dashboard() {
         }
     };
 
+    const totalProfitLoss = trades.reduce((sum, t) => sum + Number(t.profitLoss), 0);
+    const totalWins = trades.filter(t => t.win).length;
+    const totalLosses = trades.filter(t => !t.win).length;
+    const totalTrades = trades.length;
+
+    
+    const winPercentage = totalTrades > 0 ? Math.round((totalWins / totalTrades) * 100) : 0;
+
+    
+    const grossProfit = trades.filter(t => t.profitLoss > 0).reduce((sum, t) => sum + Number(t.profitLoss), 0);
+    const grossLoss = trades.filter(t => t.profitLoss < 0).reduce((sum, t) => sum + Math.abs(Number(t.profitLoss)), 0);
+    const profitFactor = grossLoss > 0 ? (grossProfit / grossLoss).toFixed(2) : 'N/A';
+
+
     return (
         <>
         <div className="username">
                             <span><h2>Welcome {loggedUser.name}</h2></span>
                         </div>
-        <div className="dashboard-container">
-            <div className="vertical-tab">
+            <div className="dashboard-container">
+                
+              <div className="vertical-tab">
                 <button className="tablinks" onClick={() => handleTabChange('dashboard')}>Dashboard</button>
                 <button className="tablinks" onClick={() => handleTabChange('journal')}>Journal</button>
                 <button className="tablinks" onClick={() => handleTabChange('search')}>Search</button>
-            </div>
+              </div>
 
-            <div className="tabcontent-container">
-                {renderTabContent()}
-            </div>
+                <div className="tabcontent-container">
+                    {trades.length > 0 && (
+                        <div className="dashboard-cards">
+                            <div className="card">
+                                <h3>Total P&L</h3>
+                                <p style={{ color: totalProfitLoss >= 0 ? 'green' : 'red' }}>
+                                    ₹{totalProfitLoss.toFixed(2)}
+                                </p>
+                            </div>
+
+                            <div className="card">
+                                <h3>Win Percentage</h3>
+                                <p>{winPercentage}%</p>
+                            </div>
+
+                            <div className="card">
+                                <h3>Profit Factor</h3>
+                                <p>{profitFactor}</p>
+                            </div>
+                        </div>
+                    )}
+                    {renderTabContent()}
+                    <PopupWindow
+                        show={popupVisible}
+                        message={popupMessage}
+                        onClose={() => setPopupVisible(false)}
+                    />
+              </div>
             </div>
         </>
     );

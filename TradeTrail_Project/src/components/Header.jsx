@@ -1,4 +1,5 @@
-﻿import '../styles/header.css';
+﻿
+import '../styles/header.css';
 import TradeTrai_logo from '../assets/WebLogo.svg';
 import { Link, useNavigate } from "react-router-dom";
 
@@ -46,4 +47,4 @@ export default function Header() {
             )}
         </header>
     );
-}
+} 

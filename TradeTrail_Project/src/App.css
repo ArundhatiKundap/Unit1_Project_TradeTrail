@@ -17,6 +17,19 @@
     padding-right: 5%; /* Add some space from right edge */
 }
 
+@media screen and (max-width: 900px) {
+    .page-wrapper {
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Vertically center */
+        padding: 20px;
+    }
+
+    .background-container {
+        padding: 20px;
+        min-height: auto; /* Let height adjust */
+    }
+}
+
 @media screen and (max-width: 600px) {
     .page-wrapper {
         justify-content: center; /* Center the form horizontally */
@@ -26,5 +39,6 @@
 
     .background-container {
         padding: 10px; /* Optional: extra space around content on small screens */
+        min-height: auto;
     }
 }

@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate ,Link} from "react-router-dom";
 import '../styles/login.css';
+import PopupWindow from '../components/PopupWindow';
 
 export default function Login() {
 
     const navigate = useNavigate();
-
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
+    
     const [formData, setFormData] = useState({    
         email: "",
         password: ""
@@ -39,11 +42,13 @@ export default function Login() {
                 localStorage.setItem("loggedInUser", JSON.stringify(findUser));
                 navigate("/dashboard");
             } else {
-                alert("Invalid email or password");
+                setPopupMessage("Invalid email or password");
+                setPopupVisible(true); 
             }
         }
         else {
-            alert("please provide a valid input");
+            setPopupMessage("please provide a valid input");
+            setPopupVisible(true); 
         }
     }
 
@@ -75,6 +80,11 @@ export default function Login() {
                     </label>
                     <div className="button-group">
                         <button type="submit" className="btn-submit">Login</button>
+                        <PopupWindow
+                            show={popupVisible}
+                            message={popupMessage}
+                            onClose={() => setPopupVisible(false)}
+                        />
                         <button type="button" className="btn-cancel" onClick={() => {
                             resetForm();
                             navigate("/");
