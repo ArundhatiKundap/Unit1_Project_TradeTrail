@@ -82,7 +82,7 @@ export default function Dashboard() {
                         </div>
                         {showAddTrade && <Addtrade
                             key={formKey}
-                            userEmail={loggedUser.email}
+                            userEmail={loggedInUser.email}
                             selectedTrade={selectedTrade}
                             onSubmitSuccess={() => {
                               
@@ -95,7 +95,7 @@ export default function Dashboard() {
                             <h3>Trades</h3>
                             
                             {showTrades && <ShowTrades                       
-                                userEmail={loggedUser.email}
+                                userEmail={loggedInUser.email}
                                 onEdit={handleEditTrade}
                                 onDelete={handleDeleteTrade}
                                 onTradesFetched={setTrades}
@@ -144,7 +144,7 @@ export default function Dashboard() {
     return (
         <>
         <div className="username">
-                            <span><h2>Welcome {loggedUser.name}</h2></span>
+                            <span><h2>Welcome {loggedInUser.name}</h2></span>
                         </div>
             <div className="dashboard-container">
                 
