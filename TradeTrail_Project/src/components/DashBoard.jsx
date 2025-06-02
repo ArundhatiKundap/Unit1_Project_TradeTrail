@@ -51,7 +51,7 @@ export default function Dashboard() {
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch(`http://localhost:3001/trades/${id}`, {
+            const response = await fetch(`https://unit1-project-tradetrail.onrender.com/trades/${id}`, {
                 method: "DELETE",
             });
 
@@ -60,10 +60,12 @@ export default function Dashboard() {
             }
 
             setPopupMessage("Trade deleted successfully.");
+            setPopupVisible(true); 
             setFormKey((prev) => prev + 1); // Refresh trade list
         } catch (error) {
             
             setPopupMessage("There was an error deleting the trade.");
+            setPopupVisible(true); 
         }
     };
 

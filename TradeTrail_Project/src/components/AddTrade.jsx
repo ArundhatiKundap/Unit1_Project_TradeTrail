@@ -99,8 +99,8 @@ export default function Addtrade({ userEmail, selectedTrade, onSubmitSuccess }) 
             try {
                 const method = selectedTrade ? "PUT" : "POST";
                 const url = selectedTrade
-                    ? `http://localhost:3001/trades/${selectedTrade.id}`
-                    : "http://localhost:3001/trades";
+                    ? `https://unit1-project-tradetrail.onrender.com/trades/${selectedTrade.id}`
+                    : "https://unit1-project-tradetrail.onrender.com/trades";
                 const addrecord = await fetch(url, {
                     method: method,
                     headers: {
