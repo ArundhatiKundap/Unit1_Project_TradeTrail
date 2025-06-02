@@ -12,7 +12,7 @@ export default function Dashboard() {
     const [showTrades, setShowTrades] = useState(true);
     const [selectedTrade, setSelectedTrade] = useState(null);
     const [formKey, setFormKey] = useState(0); // used to remount Addtrade this logic is adding to solve problem of when click cancel button and again add trade tab form is not displaying without refresh. 
-    const loggedUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
     const [trades, setTrades] = useState([]);
     const [popupVisible, setPopupVisible] = useState(false);
     const [popupMessage, setPopupMessage] = useState('');
