@@ -21,7 +21,7 @@ export default function ShowTrades({ userEmail, onEdit, onDelete, refreshKey, on
     useEffect(() => {
         const fetchTrades = async () => {
             try {
-                const res = await fetch("http://localhost:3001/trades");
+                const res = await fetch("https://unit1-project-tradetrail.onrender.com/trades");
                 const data = await res.json();
                 const userTrades = data.filter(trade => trade.userEmail === userEmail)
                                       .sort((a, b) => new Date(b.date) - new Date(a.date));
