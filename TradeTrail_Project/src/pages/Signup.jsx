@@ -16,7 +16,7 @@ export default function Signup() {
         name: "",
         email: "",
         password: "",
-        confirmpassword: "",
+        confirmPassword: "",
         instruments: ["stock"] // only stock selected
     });
 
@@ -26,6 +26,7 @@ export default function Signup() {
             ...prev,
             [name]: value,
         }));
+        setErrors({});
     };
 
 
@@ -70,7 +71,7 @@ export default function Signup() {
             navigate("/dashboard");
             
         } else {
-            setPopupMessage("Please fill in all fields.");
+            setPopupMessage("Something is Wrong..check all fields");
             setPopupVisible(true); 
             return;
         }
@@ -180,8 +181,8 @@ export default function Signup() {
                         <strong>Confirm Password</strong>
                         <input
                             type="password"
-                            name="confirmpassword"
-                            value={formData.confirmpassword}
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
                             onChange={handleChange}
                             maxLength={30}
                         />

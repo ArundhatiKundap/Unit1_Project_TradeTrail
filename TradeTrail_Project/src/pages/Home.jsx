@@ -12,28 +12,28 @@ export default function Home() {
     const animationImg = [
         {
             label: "Steps to success",
-            imgPath: "/assets/animator6.jpeg",
+            imgPath: process.env.PUBLIC_URL +"/assets/animator6.jpeg",
         },
         {
             label: "Planning",
-            imgPath: "/assets/animatorimage2.jpeg",
+            imgPath: process.env.PUBLIC_URL +"/assets/animatorimage2.jpeg",
         },
         {
             label: "Strategy",
-            imgPath: "/assets/animatorImg1.jpeg",
+            imgPath: process.env.PUBLIC_URL +"/assets/animatorImg1.jpeg",
         },
         {
             label: "Goals",
-            imgPath: "/assets/animatorimg3.jpeg",
+            imgPath: process.env.PUBLIC_URL +"/assets/animatorimg3.jpeg",
         },
         {
             label: "Vision",
-            imgPath: "/assets/animatorimg5.jpeg",
+            imgPath:process.env.PUBLIC_URL + "/assets/animatorimg5.jpeg",
         },
         
         {
             label: "Success",
-            imgPath: "/assets/animatorimg6.jpeg",
+            imgPath: process.env.PUBLIC_URL +"/assets/animatorimg6.jpeg",
         },
     ];
 
