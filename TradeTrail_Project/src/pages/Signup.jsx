@@ -17,14 +17,14 @@ export default function Signup() {
         email: "",
         password: "",
         confirmPassword: "",
-        instruments: ["stock"] // only stock selected
+       isPremium: false
     });
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value,
+            [name]: type === "checkbox" ? checked : value,
         }));
         setErrors({});
     };
@@ -35,8 +35,8 @@ export default function Signup() {
             name: "",
             email: "",
             password: "",
-            confirmpassword: "",
-            instruments: ["stock"]
+            confirmPassword: "",
+            isPremium: false
         });
     };
     const handleSubmit = async (e) => {
@@ -44,40 +44,46 @@ export default function Signup() {
          const newErrors = validateForm(formData);
         setErrors(newErrors);
 
-        const userInfo = JSON.parse(localStorage.getItem("users") || "[]");
-        const emailExists = userInfo.some(user => user.email === formData.email);
-        if (emailExists) {
-            setPopupMessage("Email already registered. Please use a different email.");
-            setPopupVisible(true); 
-            return;
-        }
-
-        if (Object.keys(newErrors).length === 0 ) {
+        if (Object.keys(newErrors).length === 0) {
             const newUser = {
-               name: formData.name,
-               email: formData.email,
-               password: formData.password,
-               instruments: formData.instruments
-             };
-
-            userInfo.push(newUser);
-
-            localStorage.setItem("users", JSON.stringify(userInfo));
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("loggedInUser", JSON.stringify(newUser));
-            setPopupMessage("Account created successfully!");
-            setPopupVisible(true); 
-            resetForm();
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                confirmPassword: formData.confirmPassword,
+                isPremium: formData.isPremium
+            };
             
-           
-            navigate("/dashboard");
-            
-        } else {
-            setPopupMessage("Something is Wrong..check all fields");
-            setPopupVisible(true); 
-            return;
+            try {
+                const response = await fetch("http://localhost:8080/auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(newUser),
+                });
+
+                if (response.ok) {
+                    setPopupMessage("Registration successful. Please log in.");
+                    setPopupVisible(true);
+                    resetForm();
+                }
+                else {
+                    const errorData = await response.text();
+                    setPopupMessage(errorData || "Registration failed");
+                    setPopupVisible(true);
+                }
+            }
+            catch (error) {
+                setPopupMessage(error || "Something went wrong. Please try again.");
+                setPopupVisible(true);
+            }
+        }
+        else {
+            setPopupMessage("Please Check all fields");
+            setPopupVisible(true);
         }
     };
+    
     const validateForm = (data) => {
         const errors = {};
 
@@ -100,9 +106,9 @@ export default function Signup() {
         }else if(!passwordRegex.test(data.password)){
             errors.password = 'Password include at least one special character and one number.'
         }
-
-        if (data.confirmPassword !== data.password) {
-            errors.confirmPassword = 'Passwords do not match';
+        
+        if ((data.confirmPassword || '').trim() !== (data.password || '').trim()) {
+            errors.confirmPassword = "Passwords do not match";
         }
 
         return errors;
@@ -132,20 +138,19 @@ export default function Signup() {
                         )}
                     </label>
 
-                    <label><strong>Select Instrument</strong></label>
+                    <label><strong>Do you want Premium account</strong></label>
                     <div className="checkbox">
                         <label>
-                            <input type="checkbox" value="stock" checked readOnly />
-                            Stock
+                        <input
+                            type="checkbox"
+                            name="isPremium"
+                            checked={formData.isPremium}
+                            onChange={handleChange}
+                        />
+                            Premium
                         </label>
                     </div>
-                    <div className="checkbox">
-                        <label>
-                            <input type="checkbox" value="crypto" disabled />
-                            Crypto
-                        </label>
-                    </div>
-
+                  
                     <label>
                         <strong>Email</strong>
                         <input
@@ -169,7 +174,7 @@ export default function Signup() {
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
-                            minlength={8}
+                            minLength={8}
                             maxLength={30}
                         />
                         {errors.password && (

@@ -33,7 +33,7 @@ export default function Home() {
         
         {
             label: "Success",
-            imgPath: process.env.PUBLIC_URL +"/assets/animatorimg6.jpeg",
+            imgPath: "/assets/animatorimg6.jpeg",
         },
     ];
 

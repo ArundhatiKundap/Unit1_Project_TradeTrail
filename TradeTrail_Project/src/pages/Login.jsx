@@ -29,28 +29,43 @@ export default function Login() {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const userInfo = JSON.parse(localStorage.getItem("users") || "[]");
         if (formData.email !== "" && formData.password !== "") {
-            const findUser = userInfo.find(
-                (user) =>
-                    user.email === formData.email &&
-                    user.password === formData.password
-            );
+            try {
 
-            if (findUser) {
-                localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("loggedInUser", JSON.stringify(findUser));
-                navigate("/dashboard");
-            } else {
-                setPopupMessage("Invalid email or password");
-                setPopupVisible(true); 
+                const response = await fetch("http://localhost:8080/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        password: formData.password,
+                    }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                   // Save JWT and user info in localStorage or preferably sessionStorage
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+                    localStorage.setItem("isLoggedIn", "true");
+
+                    navigate("/dashboard");
+                } else {
+                    const errorText = await response.text();  // Get error string
+                    setPopupMessage(errorText || "Invalid email or password");
+                    setPopupVisible(true);
+                }
+            } catch (error) {              
+                setPopupMessage("Something went wrong.Please try again.");
+                setPopupVisible(true);
+               
             }
+        } else {
+            setPopupMessage("Please provide valid input");
+            setPopupVisible(true);
         }
-        else {
-            setPopupMessage("please provide a valid input");
-            setPopupVisible(true); 
-        }
-    }
+    };
 
     return (    
         <div className="page-wrapper">
